@@ -1,4 +1,4 @@
-import { Component } from "react/cjs/react.development";
+import { Component } from "react";
 import ErrorMessage from "../errorMessage/errorMessage";
 
 class ErrorBoundary extends Component {
