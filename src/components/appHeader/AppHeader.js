@@ -1,19 +1,19 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import './appHeader.scss';
 
 const AppHeader = () => {
     return (
         <header className="app__header">
             <h1 className="app__title">
-                <a href="1">
+                <Link to="/">
                     <span>Marvel</span> information portal
-                </a>
+                </Link>
             </h1>
             <nav className="app__menu">
                 <ul>
-                    <li><a href="1">Characters</a></li>
+                    <li><Link to="/">Characters</Link></li>
                     /
-                    <li><a href="1">Comics</a></li>
+                    <li><Link to="/comics">Comics</Link></li>
                 </ul>
             </nav>
         </header>

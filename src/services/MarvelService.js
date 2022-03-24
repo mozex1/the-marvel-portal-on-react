@@ -1,39 +1,43 @@
-export default class MarvelService {
-    _apiBase = `https://gateway.marvel.com:443/v1/public/`;
-    _apiKey = `apikey=16776d21af006d5c271dc36e1c724091`;
-	_baseOffset = 210;
+import { useHttp } from "../hooks/http.hook";
 
-	getResource = async (url) => {
-		try {
-			const res = await fetch(url);
-			return await res.json();
-		} catch(e) {
-			throw new Error(`Not fetch ${url}, status: ${e}`)
-		}
-	}
-	
+const useMarvelService = () =>  {
+	const {loading, error, request, cleanError} = useHttp();
 
-	getAllCharacters = async (offset = this._baseOffset) => {
+    const _apiBase = `https://gateway.marvel.com:443/v1/public/`;
+    const _apiKey = `apikey=16776d21af006d5c271dc36e1c724091`;
+	const _baseOffset = 210;
+	const _baseOffsetComics = 8;
+
+
+
+	const getAllCharacters = async (offset = _baseOffset) => {
 		try {
-			const characters =  await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
-			return characters.data.results.map(this._transformCharacter);
+			const characters =  await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
+			return characters.data.results.map(_transformCharacter);
 		} catch(e) {
-			console.log(e);
-			return {}
+			throw e;
 		}
 	}
 
-	getCharacter = async (id) => {
+	const getCharacter = async (id) => {
 		try {
-			const character = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
-			return this._transformCharacter(character.data.results[0]);
+			const character = await request(`${_apiBase}characters/${id}?${_apiKey}`);
+			return _transformCharacter(character.data.results[0]);
 		} catch(e) {
-			console.log(e);
-			return {}
+			throw e;
 		}
 	}
 
-    _transformCharacter = (char) => {
+	const getAllComics = async (offset = _baseOffsetComics) => {
+		try {
+			const comics = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
+			return comics.data.results.map(_transformComics);
+		} catch(e) {
+			throw e;
+		}
+	}
+
+    const _transformCharacter = (char) => {
 		const obj = {
 			name: char.name,
 			description: char.description,
@@ -54,52 +58,28 @@ export default class MarvelService {
 		return obj;
 	}
 
-    // getAllBooks = async () => {
-	// 	const res = await this.getResource('/books?page=1&pageSize=10');
-	// 	return res.map(this._transformBook);
-	// }
-	// getBook = async (id) => {
-	// 	const book = await this.getResource(`/books/${id}`);
-	// 	return this._transformBook(book);
-	// }
+	const _transformComics = (comics) => {
+		const obj = {
+			id: comics.id,
+			title: comics.title,
+            thumbnail: comics.thumbnail.path + `.` + comics.thumbnail.extension,
+			urls: comics.urls[0].url,
+			price: comics.prices[0].price,
+		}
+		!obj.price ? (obj.price = 'Is unknown') : (obj.price += '$');
 
-    // getAllHouses = async () => {
-	// 	const res = await this.getResource('/houses?page=1&pageSize=10')
-	// 	return res.map(this._transformHouse);
-	// }
-	// getHouse = async (id) => {
-	// 	const house = await this.getResource(`/houses/${id}`);
-	// 	return this._transformHouse(house);
-	// }
 
-	
+		return obj;
+	}
 
-	// _transformHouse(house){
-	// 	const obj = {
-	// 		name: house.name,
-	// 		region: house.region,
-    //         words: house.words,
-    //         titles: house.titles,
-    //         overlord: house.overlord,
-	// 		ancestralWeapon: house.ancestralWeapon,
-	// 	}
-	// 	Object.keys(obj).forEach((item, i) => {
-	// 		if (!obj[item]) {
-	// 			obj[item] = 'No data';
-	// 		}
-	// 	});
-	// 	return obj;
-	// }
-
-	// _transformBook(book){
-	// 	const obj = {
-	// 		name: book.name,
-	// 		authors: book.authors,
-    //         numberOfPages: book.numberOfPages,
-	// 		country: book.country,
-	// 		released: book.released,
-	// 	}
-	// 	obj.released = obj.released.slice(0, 10)
-	// 	return obj;
-// }
+	return {
+		loading,
+		error,
+		cleanError,
+		getAllCharacters,
+		getCharacter,
+		getAllComics
+	}
 }
+
+export default useMarvelService;
