@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ErrorMessage from '../errorMessage/errorMessage';
 import Spinner from '../spinner/Spinner.js';
 import './charList.scss';
@@ -70,6 +71,7 @@ const CharList = (props) => {
     }
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading && !newItemLoading ? <Spinner/> : null;
+    
     // const content = !((loading && !newItemLoading) || error) ? <View chars={chars}/> : null;
     
     return (
@@ -82,7 +84,7 @@ const CharList = (props) => {
             disabled={newItemLoading} 
             style={{'display': charsEnded ? 'none' : 'block'}}
             className="button button__main button__long">
-                    <div className="inner">load more</div>
+                    <div className="inner">Загрузить еще</div>
             </button>
         </div>
     )

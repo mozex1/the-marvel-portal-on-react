@@ -6,7 +6,7 @@ const AppHeader = () => {
         <header className="app__header">
             <h1 className="app__title">
                 <Link to="/">
-                    <span>Marvel</span> information portal
+                Портал <span>Marvel</span>
                 </Link>
             </h1>
             <nav className="app__menu">
@@ -14,11 +14,11 @@ const AppHeader = () => {
                     <li><NavLink 
                     end
                     style={({isActive}) => ({'color': isActive ? '#9f0013' : null})}
-                    to="/">Characters</NavLink></li>
+                    to="/">Персонажи</NavLink></li>
                     /
                     <li><NavLink 
                     style={({isActive}) => ({'color': isActive ? '#9f0013' : null})}
-                    to="/comics">Comics</NavLink></li>
+                    to="/comics">Комиксы</NavLink></li>
                 </ul>
             </nav>
         </header>

@@ -13,4 +13,4 @@ const ComicsPage = () => {
     )
 }
 
-export {ComicsPage};
+export default ComicsPage;

@@ -8,8 +8,8 @@ const AppBanner = () => {
         <div className="app__banner">
             <img src={avengers} alt="Avengers"/>
             <div className="app__banner-text">
-                New comics every week!<br/>
-                Stay tuned!
+                Новые комиксы каждую неделю!<br/>
+                Буть в курсе!
             </div>
             <img src={avengersLogo} alt="Avengers logo"/>
         </div>

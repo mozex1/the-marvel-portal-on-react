@@ -4,30 +4,30 @@ import useMarvelService from '../../services/MarvelService';
 import AppBanner from '../appBanner/AppBanner';
 import ErrorMessage from '../errorMessage/errorMessage';
 import Spinner from '../spinner/Spinner.js';
-import './singleComicPage.scss';
+import './singleCharacterPage.scss';
 
-const SingleComicPage = () => {
-    const [comic, setComic] = useState(null);
-    const {comicId} = useParams();
-    const {error, cleanError, loading, getComic} = useMarvelService();
+const SingleCharacterPage = () => {
+    const [char, setChar] = useState(null);
+    const {charId} = useParams();
+    const {error, cleanError, loading, getCharacter} = useMarvelService();
 
     useEffect(() => {
-        updateComic();
-    },[comicId])
+        updateChar();
+    },[charId])
 
-    const updateComic = () => {
+    const updateChar = () => {
         cleanError();
-        getComic(comicId).then(onComicLoaded);
+        getCharacter(charId).then(onCharLoaded);
     }
 
-    const onComicLoaded = (comic) => {
-        setComic(comic);
+    const onCharLoaded = (char) => {
+        setChar(char);
     }
 
 
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !comic) ? <View comic={comic}/> : null;
+    const content = !(loading || error || !char) ? <View char={char}/> : null;
     return (
         <>
             <AppBanner/>
@@ -40,28 +40,26 @@ const SingleComicPage = () => {
     )
 }
 
-const View = ({comic}) => {
-    const {title, description, pageCount, thumbnail, language, price} = comic;
+const View = ({char}) => {
+    const { name, description, thumbnail } = char;
     const navigate = useNavigate();
     const navType = useNavigationType();
+
     const navigateBack = () => {
         if (navType !== 'POP') return navigate(-1);
-        return navigate("../comics", { replace: true });
+        return navigate("../", { replace: true });
     }
 
     return (
         <div className="single-comic">
-            <img src={thumbnail} alt={title} className="single-comic__img"/>
+            <img src={thumbnail} alt={name} className="single-comic__char-img"/>
             <div className="single-comic__info">
-                <h2 className="single-comic__name">{title}</h2>
+                <h2 className="single-comic__name">{name}</h2>
                 <p className="single-comic__descr">{description}</p>
-                <p className="single-comic__descr">{pageCount}</p>
-                <p className="single-comic__descr">Language: {language}</p>
-                <div className="single-comic__price">{price}</div>
             </div>
             <button onClick={navigateBack} className="single-comic__back">Back</button>
         </div>
     )
 }
 
-export default SingleComicPage;
+export default SingleCharacterPage;

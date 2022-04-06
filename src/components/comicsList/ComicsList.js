@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
+import SkeletonComics from '../skeleton/SkeletonComics';
 import ErrorMessage from '../errorMessage/errorMessage';
 import Spinner from '../spinner/Spinner.js';
 import './comicsList.scss';
 
+
 const ComicsList = (props) => {
     const [comics, setComics] = useState([]);
+    const [firstLoading, setFirstLoading] = useState(true);
     const [newComicsLoading, setNewComicsLoading] = useState(true);
     const [offset, setOffset] = useState(18);
     const {error, cleanError, loading, getAllComics } = useMarvelService();
@@ -24,6 +27,7 @@ const ComicsList = (props) => {
     }
 
     const onLoadMoreComics = () => {
+        setFirstLoading(false);
         getAllComics(offset).then(onAddNewComics);
         setNewComicsLoading(false);
     }
@@ -39,13 +43,15 @@ const ComicsList = (props) => {
                 </li>
         )
     });
+    const skeleton = firstLoading && loading ? <SkeletonComics/>  : null;
     const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newComicsLoading ? <Spinner/> : null;
+    const spinner = !firstLoading && loading ? <Spinner/> : null;
     const content = !(loading && error) ? comicsList : null;
 
     return (
         <div className="comics__list">
             <ul className="comics__grid">
+                {skeleton}
                 {content}
             </ul>
             {errorMessage}
@@ -53,7 +59,7 @@ const ComicsList = (props) => {
             {spinner}
             </div>
             <button onClick={onLoadMoreComics} className="button button__main button__long">
-                <div  className="inner">load more</div>
+                <div  className="inner">Загрузить еще</div>
             </button>
         </div>
     )

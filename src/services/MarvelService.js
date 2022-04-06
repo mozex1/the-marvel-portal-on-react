@@ -28,6 +28,15 @@ const useMarvelService = () =>  {
 		}
 	}
 
+	const getCharacterForName = async (name) => {
+		try {
+			const character = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+			return _transformCharacter(character.data.results[0]);;
+		} catch(e) {
+			throw e;
+		}
+	}
+
 	const getAllComics = async (offset = _baseOffsetComics) => {
 		try {
 			const comics = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
@@ -61,7 +70,7 @@ const useMarvelService = () =>  {
 		}
 		Object.keys(obj).forEach(item => {
 			if (!obj[item]) {
-				obj[item] = 'No more information.';
+				obj[item] = 'Информации больше нет';
 			}
 		});
 		return obj;
@@ -71,15 +80,15 @@ const useMarvelService = () =>  {
 		const obj = {
 			id: comics.id,
 			title: comics.title,
-			description: comics.description || 'There is no description',
-			pageCount: comics.pageCount ? `${comics.pageCount} p.` : 'No info about the number of pages',
+			description: comics.description || 'Нет описания',
+			pageCount: comics.pageCount ? `${comics.pageCount} страниц.` : 'Нет информации о количестве страниц',
             thumbnail: comics.thumbnail.path + `.` + comics.thumbnail.extension,
-			language: comics.textObjects.language || 'en-us',
+			language: comics.textObjects.language || 'eng',
 			urls: comics.urls[0].url,
 			price: comics.prices[0].price,
 		}
-		!obj.price ? (obj.price = 'Is unknown') : (obj.price += '$');
-
+		!obj.price ? (obj.price = 'Неизвестно') : (obj.price += '$');
+		obj.description = obj.description.replace(/(<br>.+<br>)/gs, '');
 
 		return obj;
 	}
@@ -90,6 +99,7 @@ const useMarvelService = () =>  {
 		cleanError,
 		getAllCharacters,
 		getCharacter,
+		getCharacterForName,
 		getAllComics,
 		getComic
 	}
