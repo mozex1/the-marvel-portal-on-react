@@ -9,8 +9,7 @@ import { Link } from 'react-router-dom';
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
-
-    const {error, cleanError, loading, getCharacter} = useMarvelService();
+    const {error, cleanError, loading, getCharacter } = useMarvelService();
 
     useEffect(() => {
         updateChar();

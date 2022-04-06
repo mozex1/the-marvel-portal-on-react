@@ -1,9 +1,9 @@
 import { useParams, useNavigate, useNavigationType } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import useMarvelService from '../../services/MarvelService';
-import AppBanner from '../appBanner/AppBanner';
-import ErrorMessage from '../errorMessage/errorMessage';
-import Spinner from '../spinner/Spinner.js';
+import useMarvelService from '../../../services/MarvelService';
+import AppBanner from '../../appBanner/AppBanner';
+import ErrorMessage from '../../errorMessage/errorMessage';
+import Spinner from '../../spinner/Spinner.js';
 import './singleCharacterPage.scss';
 
 const SingleCharacterPage = () => {
@@ -23,7 +23,6 @@ const SingleCharacterPage = () => {
     const onCharLoaded = (char) => {
         setChar(char);
     }
-
 
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner /> : null;

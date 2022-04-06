@@ -37,6 +37,16 @@ const useMarvelService = () =>  {
 		}
 	}
 
+	const getCharactersForNameStartsWith = async (nameStartsWith) => {
+		try {
+			const characters = await request(`${_apiBase}characters?nameStartsWith=${nameStartsWith}&${_apiKey}`);
+			return characters.data.results.map(_transformCharacter);
+		} catch(e) {
+			throw e;
+		}
+	}
+
+	
 	const getAllComics = async (offset = _baseOffsetComics) => {
 		try {
 			const comics = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
@@ -100,6 +110,7 @@ const useMarvelService = () =>  {
 		getAllCharacters,
 		getCharacter,
 		getCharacterForName,
+		getCharactersForNameStartsWith,
 		getAllComics,
 		getComic
 	}

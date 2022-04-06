@@ -10,12 +10,17 @@ import './charSearchForm.scss';
 
 const CharSearchForm = () => {
     const [ char, setChar ] = useState(null);
+    const [charList, setCharList] = useState([]);
     const [notFoundChar, setNotFoundChar] = useState(false);
-    const {error, cleanError, loading, getCharacterForName } = useMarvelService();
+    const {error, cleanError, loading, getCharacterForName, getCharactersForNameStartsWith } = useMarvelService();
 
     const onCharLoaded = (char) => {
         setNotFoundChar(false);
         setChar(char);
+    }
+
+    const onCharListLoaded = (charList) => {
+        setCharList(charList);
     }
 
     const notRequestChar = () => {
@@ -27,11 +32,12 @@ const CharSearchForm = () => {
         cleanError();
         getCharacterForName(charName)
             .then(onCharLoaded)
-            .catch(notRequestChar);    
+            .catch(notRequestChar);  
+        getCharactersForNameStartsWith(charName).then(onCharListLoaded);  
     }
 
     const errorMessage = error ? <div className="char__search-critical-error"><ErrorMessage /></div> : null;
-    const results = char ? 
+    const resultsChar = char ? 
         <div className="char__search-wrapper">
             <div className="char__search-success">Нашли! Посетить страницу {char.name}? </div> 
             <Link to={`/characters/${char.id}`} className="button button__secondary">
@@ -39,10 +45,17 @@ const CharSearchForm = () => {
             </Link>
         </div>
         : null;
-
     const notRequest = notFoundChar ? <div className="char__search-error">
-                            Персонаж не был найден. Проверьте имя и повторите попытку
+                            Такой персонаж не был найден. Может вы имели ввиду:
                         </div> : null;
+
+    const charsList = charList.map((char, i) => {
+        if (i > 9) return null;
+        return (
+                <Link to={`/characters/${char.id}`} key={i} className="char__comics-item">
+                    {char.name}
+                </Link>
+            )});
   
     return (
         <Formik
@@ -73,8 +86,9 @@ const CharSearchForm = () => {
                     </div>
                     <FormikErrorMessage className="char__search-error" name="charName" component="div"/>
                 </Form>
-                {results}
+                {resultsChar}
                 {notRequest}
+                {charsList}
                 {errorMessage}
             </div>
         </Formik>
