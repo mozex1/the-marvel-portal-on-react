@@ -75,7 +75,7 @@ const CharSearchForm = () => {
                             id="charName" 
                             name="charName" 
                             type='text' 
-                            placeholder="Напишите имя"/>
+                            placeholder="Введите имя"/>
                         <button 
                             className="button button__main" 
                             type='submit' 
