@@ -1,10 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+
 import useMarvelService from '../../services/MarvelService';
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import ErrorMessage from '../errorMessage/errorMessage';
 import Spinner from '../spinner/Spinner.js';
+import ErrorMessage from '../errorMessage/errorMessage.js';
 import './charList.scss';
+
+
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting': 
+            return <Spinner/>;
+        case 'loading':
+            return newItemLoading ? <Component/> : <Spinner/>
+        case 'confirmed':
+            return <Component/>;
+        case 'error':
+            return <ErrorMessage/>;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
 
 const CharList = (props) => {
 
@@ -14,10 +30,11 @@ const CharList = (props) => {
     const [charsEnded, setCharsEnded] = useState(false);
     const [selectedChar, setSelectedChar] = useState(null);
 
-    const {getAllCharacters, error, loading} = useMarvelService();
+    const { getAllCharacters, process, setProcess } = useMarvelService();
 
     useEffect(() => {
         onRequest(offset, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     const onCharsLoaded = (newChars) => {
@@ -38,7 +55,9 @@ const CharList = (props) => {
 
     const onRequest = (offset, init) => {
         init ? setNewItemLoading(false) : setNewItemLoading(true);
-        getAllCharacters(offset).then(onCharsLoaded);
+        getAllCharacters(offset)
+            .then(onCharsLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
     const updateSelectedChar = (char) => {
@@ -47,21 +66,22 @@ const CharList = (props) => {
     }
 
     
-    const View = ({chars}) => {
+    const View = (data) => {
         return (
             <>
             <ul className="char__grid">
-                {chars.map((char, i) => {
+                {data.map((char, i) => {
                     const imgNotFound = char.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
                     return (
                         <li key={char.id} 
-                        className={char.id === selectedChar ? "char__item_selected" : "char__item"} 
-                        onClick={() => updateSelectedChar(char)}>
-                            <img 
-                            src={char.thumbnail} 
-                            className='char__item_img'
-                            style={imgNotFound ? {objectFit:'contain'} : {objectFit:'cover'}} alt="char"/>
-                            <div className="char__name">{char.name}</div>
+                            className={char.id === selectedChar ? "char__item_selected" : "char__item"} 
+                            onClick={() => updateSelectedChar(char)}>
+                                <img 
+                                src={char.thumbnail} 
+                                className='char__item_img'
+                                style={imgNotFound ? {objectFit:'contain'} : {objectFit:'cover'}} 
+                                alt="char"/>
+                                <div className="char__name">{char.name}</div>
                         </li>
                     )
                 })}
@@ -69,16 +89,15 @@ const CharList = (props) => {
             </>
         )
     }
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
-    
-    // const content = !((loading && !newItemLoading) || error) ? <View chars={chars}/> : null;
-    
+
+    const elements = useMemo(() => {
+        return setContent(process, () => View(chars), newItemLoading);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [process, selectedChar]);
+
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            <View chars={chars}/>
+            {elements}
             <button 
             onClick={() => onRequest(offset)} 
             disabled={newItemLoading} 

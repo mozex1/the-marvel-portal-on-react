@@ -10,18 +10,16 @@ import './comicsList.scss';
 const ComicsList = (props) => {
     const [comics, setComics] = useState([]);
     const [firstLoading, setFirstLoading] = useState(true);
-    const [newComicsLoading, setNewComicsLoading] = useState(true);
     const [offset, setOffset] = useState(18);
-    const {error, cleanError, loading, getAllComics } = useMarvelService();
+    const {error, loading, getAllComics } = useMarvelService();
     
 
     useEffect(() => {
         getAllComics().then(data => setComics(data));
-        setNewComicsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onAddNewComics = (newComics) => {
-        setNewComicsLoading(true);
         setComics(comics => ([...comics, ...newComics]));
         setOffset(offset => offset + 8);
     }
@@ -29,7 +27,6 @@ const ComicsList = (props) => {
     const onLoadMoreComics = () => {
         setFirstLoading(false);
         getAllComics(offset).then(onAddNewComics);
-        setNewComicsLoading(false);
     }
     
     const comicsList = comics.map((comic, i) => {

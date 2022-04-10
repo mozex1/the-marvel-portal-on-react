@@ -13,9 +13,10 @@ const MainPage = () => {
     const onCharSelected = (id) => {
         setChar(id)
     };
-
+    
     return (
         <>
+            
             <Helmet>
                 <meta
                     name="description"

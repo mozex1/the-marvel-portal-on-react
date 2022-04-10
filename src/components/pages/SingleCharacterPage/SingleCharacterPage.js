@@ -2,46 +2,41 @@ import { useParams, useNavigate, useNavigationType } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Helmet } from "react-helmet";
 import useMarvelService from '../../../services/MarvelService';
+import setContent from '../../../utils/setContent';
 import AppBanner from '../../appBanner/AppBanner';
-import ErrorMessage from '../../errorMessage/errorMessage';
-import Spinner from '../../spinner/Spinner.js';
 import './singleCharacterPage.scss';
 
 const SingleCharacterPage = () => {
     const [char, setChar] = useState(null);
     const {charId} = useParams();
-    const {error, cleanError, loading, getCharacter} = useMarvelService();
+    const { cleanError, getCharacter, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         updateChar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[charId])
 
     const updateChar = () => {
         cleanError();
-        getCharacter(charId).then(onCharLoaded);
+        getCharacter(charId).then(onCharLoaded).then(() => setProcess('confirmed'));
     }
 
     const onCharLoaded = (char) => {
         setChar(char);
     }
 
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !char) ? <View char={char}/> : null;
     return (
         <>
             <AppBanner/>
-            {errorMessage}
-            <div style={{'marginTop': '50px'}}>
-                {spinner}
+            <div style={{'marginTop': 50}}>
+                {setContent(process, View, char)}
             </div>
-            {content}
         </>
     )
 }
 
-const View = ({char}) => {
-    const { name, description, thumbnail } = char;
+const View = ({data}) => {
+    const { name, description, thumbnail } = data;
     const navigate = useNavigate();
     const navType = useNavigationType();
 

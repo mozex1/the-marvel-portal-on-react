@@ -2,47 +2,41 @@ import { useParams, useNavigate, useNavigationType } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Helmet } from "react-helmet";
 import useMarvelService from '../../../services/MarvelService';
+import setContent from '../../../utils/setContent';
 import AppBanner from '../../appBanner/AppBanner';
-import ErrorMessage from '../../errorMessage/errorMessage';
-import Spinner from '../../spinner/Spinner.js';
 import './singleComicPage.scss';
 
 const SingleComicPage = () => {
     const [comic, setComic] = useState(null);
     const {comicId} = useParams();
-    const {error, cleanError, loading, getComic} = useMarvelService();
+    const {cleanError, getComic, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         updateComic();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[comicId])
 
     const updateComic = () => {
         cleanError();
-        getComic(comicId).then(onComicLoaded);
+        getComic(comicId).then(onComicLoaded).then(() => setProcess('confirmed'));
     }
 
     const onComicLoaded = (comic) => {
         setComic(comic);
     }
 
-
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !comic) ? <View comic={comic}/> : null;
     return (
         <>
             <AppBanner/>
-            {errorMessage}
-            <div style={{'marginTop': '50px'}}>
-                {spinner}
+            <div style={{'marginTop': 50}}>
+                {setContent(process, View, comic)}
             </div>
-            {content}
         </>
     )
 }
 
-const View = ({comic}) => {
-    const {title, description, pageCount, thumbnail, language, price} = comic;
+const View = ({data}) => {
+    const {title, description, pageCount, thumbnail, language, price} = data;
     const navigate = useNavigate();
     const navType = useNavigationType();
     const navigateBack = () => {
