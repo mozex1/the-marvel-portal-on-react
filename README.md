@@ -1,4 +1,4 @@
-<h1 align="center">Проект по вселенной Marvel.</h1>
+<h1 align="center"><a href="https://marvelportal.ru/" target="_blank">Проект по вселенной Marvel.</a></h1>
 <h4 align="center">Функциональные компоненты React и хуки</h4>
 <p align="center">Были реализованы:</p>
 <ul>
